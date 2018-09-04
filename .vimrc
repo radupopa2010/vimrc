@@ -1,14 +1,32 @@
 set runtimepath+=~/.vim_runtime
 
-source ~/.vim_runtime/vimrcs/basic.vim
-source ~/.vim_runtime/vimrcs/filetypes.vim
-source ~/.vim_runtime/vimrcs/plugins_config.vim
-source ~/.vim_runtime/vimrcs/extended.vim
+
+"source ~/.vim_runtime/vimrcs/basic.vim
+"source ~/.vim_runtime/vimrcs/filetypes.vim
+"source ~/.vim_runtime/vimrcs/plugins_config.vim
+"source ~/.vim_runtime/vimrcs/extended.vim
 
 try
 source ~/.vim_runtime/my_configs.vim
 catch
 endtry
+"True Colors
+if (has("nvim"))
+  "For Neovim 0.1.3 and 0.1.4 < https://github.com/neovim/neovim/pull/2198 >
+  let $NVIM_TUI_ENABLE_TRUE_COLOR=1
+endif
+
+"For Neovim > 0.1.5 and Vim > patch 7.4.1799 < https://github.com/vim/vim/commit/61be73bb0f965a895bfb064ea3e55476ac175162 >
+"Based on Vim patch 7.4.1770 (`guicolors` option) < https://github.com/vim/vim/commit/8a633e3427b47286869aa4b96f2bfc1fe65b25cd >
+" < https://github.com/neovim/neovim/wiki/Following-HEAD#20160511 >
+if (has("termguicolors"))
+  set termguicolors
+endif
+
+
+"To turn on italics, configure as follows:
+let g:material_terminal_italics = 1
+let g:lightline = { 'colorscheme': 'material_vim' }
 
 "if has('python')
 "    echo 'there is Python 2.x'
@@ -25,6 +43,7 @@ call vundle#begin()
 
 
 Plugin 'VundleVim/Vundle.vim'
+Plugin 'kaicataldo/material.vim'
 "git interface
 Plugin 'tpope/vim-fugitive'
 "filesystem
@@ -36,21 +55,22 @@ map <C-n> :NERDTreeToggle<CR>
 
 "html
 "  isnowfy only compatible with python not python3
-Plugin 'isnowfy/python-vim-instant-markdown'
+"Plugin 'isnowfy/python-vim-instant-markdown'
 Plugin 'jtratner/vim-flavored-markdown'
 Plugin 'suan/vim-instant-markdown'
 Plugin 'nelstrom/vim-markdown-preview'
 "python sytax checker
 Plugin 'nvie/vim-flake8'
 Plugin 'vim-scripts/Pydiction'
-let g:pydiction_location = '/home/radu/.vim/bundle/Pydiction/complete-dict'
+"let g:pydiction_location = '/home/radu/.vim/bundle/Pydiction/complete-dict'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'scrooloose/syntastic'
 
 "auto-completion stuff
 "Plugin 'klen/python-mode'
 Plugin 'Valloric/YouCompleteMe'
-Plugin 'klen/rope-vim'
+Plugin 'rkulla/pydiction'
+"Plugin 'klen/rope-vim'
 "Plugin 'davidhalter/jedi-vim'
 Plugin 'ervandew/supertab'
 ""code folding
@@ -60,6 +80,8 @@ Plugin 'ervandew/supertab'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'jnurmine/Zenburn'
 
+Plugin 'python-mode/python-mode',
+
 call vundle#end()
 
 filetype plugin indent on    " enables filetype detection
@@ -68,13 +90,15 @@ filetype plugin indent on    " enables filetype detection
 "autocomplete
 let g:ycm_autoclose_preview_window_after_completion=1
 
+
 "custom keys
 " let mapleader=" "
 "map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
 "
 call togglebg#map("<F5>")
-"colorscheme zenburn
-"set guifont=Monaco:h14
+let g:airline_theme = 'material'
+colorscheme material
+set guifont=Monaco:h14
 
 let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
 
@@ -87,16 +111,16 @@ set tabstop=2
 set softtabstop=2
 set shiftwidth=2
 "python with virtualenv support
-py << EOF
-import os.path
-import sys
-import vim
-if 'VIRTUA_ENV' in os.environ:
-  project_base_dir = os.environ['VIRTUAL_ENV']
-  sys.path.insert(0, project_base_dir)
-  activate_this = os.path.join(project_base_dir,'bin/activate_this.py')
-  execfile(activate_this, dict(__file__=activate_this))
-EOF
+"py << EOF
+"import os.path
+"import sys
+"import vim
+"if 'VIRTUA_ENV' in os.environ:
+"  project_base_dir = os.environ['VIRTUAL_ENV']
+"  sys.path.insert(0, project_base_dir)
+"  activate_this = os.path.join(project_base_dir,'bin/activate_this.py')
+"  execfile(activate_this, dict(__file__=activate_this))
+"EOF
 
 "it would be nice to set tag files by the active virtualenv here
 ":set tags=~/mytags "tags for ctags and taglist
@@ -164,7 +188,7 @@ set colorcolumn=80
 
 " spell check
 :set spell spelllang=en_us
-
+:set nospell
 " search and replace selected text
 
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
