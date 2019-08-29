@@ -33,7 +33,7 @@ let g:lightline = { 'colorscheme': 'material_vim' }
 "elseif has('python3')
 "    echo 'there is Python 3.x'
 "endif
-
+let g:pymode_python = 'python3'
 "vundle
 set nocompatible
 filetype off
@@ -61,10 +61,15 @@ Plugin 'suan/vim-instant-markdown'
 Plugin 'nelstrom/vim-markdown-preview'
 "python sytax checker
 Plugin 'nvie/vim-flake8'
+" let g:flake8_ignore="E501,W293"
+" g:flake8_ignore has been deprecated in favour of flake8 config files
+" see ~/.config/flake8
 Plugin 'vim-scripts/Pydiction'
-"let g:pydiction_location = '/home/radu/.vim/bundle/Pydiction/complete-dict'
+
+let g:pydiction_location = '/home/radu/.vim/bundle/Pydiction/complete-dict'
 Plugin 'vim-scripts/indentpython.vim'
 Plugin 'scrooloose/syntastic'
+let g:syntastic_python_checkers = ['flake8']
 
 "auto-completion stuff
 "Plugin 'klen/python-mode'
@@ -80,9 +85,19 @@ Plugin 'ervandew/supertab'
 Plugin 'altercation/vim-colors-solarized'
 Plugin 'jnurmine/Zenburn'
 
-Plugin 'python-mode/python-mode',
+Plugin 'python/black'
+" Plugin 'python-mode/python-mode'
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
 
 call vundle#end()
+
+
+" black config section
+" let g:black_fast
+let g:black_linelength = 79
+" let g:black_skip_string_normalization
+" let g:black_virtualenv = '/usr/bin/pip3'
+
 
 filetype plugin indent on    " enables filetype detection
 " let g:SimpylFold_docstring_preview = 1
@@ -146,12 +161,13 @@ au BufRead,BufNewFile *.py set softtabstop=4
 highlight BadWhitespace ctermbg=red guibg=red
 
 " Display tabs at the beginning of a line in Python mode as bad.
-au BufRead,BufNewFile *.py,*.pyw match BadWhitespace /^\t\+/
+
+" au BufRead,BufNewFile *.py,*.pyw match BadWhitespace /^\t\+/
 " Make trailing whitespace be flagged as bad.
-au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h,*.txt,*.sh match BadWhitespace /\s\+$/
 
 " Wrap text after a certain number of characters
-"au BufRead,BufNewFile *.py,*.pyw,*.sh set textwidth=80
+au BufRead,BufNewFile *.py,*.pyw,*.sh set textwidth=100
 
 
 
@@ -185,6 +201,7 @@ autocmd FileType javascript setlocal shiftwidth=2 tabstop=2
 au BufNewFile,BufRead *.sh  set colorcolumn=90
 highlight ColorColumn ctermbg=gray
 set colorcolumn=80
+set hlsearch
 
 " spell check
 :set spell spelllang=en_us
@@ -193,3 +210,12 @@ set colorcolumn=80
 
 vnoremap <C-r> "hy:%s/<C-r>h//gc<left><left><left>
 
+" makdown preview
+filetype plugin on
+
+run Black on save
+autocmd BufWritePre *.py execute ':Black'
+
+" Allow to copy from clipboard
+" set clipboard=unnamed
+set clipboard=unnamedplus
